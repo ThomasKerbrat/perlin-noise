@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Page Title</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="p5.min.js"></script>
+        <style>
+            /* canvas {
+                border: 1px solid black;
+            } */
+
+            .content {
+                display: flex;
+                flex-direction: row;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="content">
+            <canvas width="800" height="800"></canvas>
+            <form>
+                <fieldset>
+                    <legend>Parameters</legend>
+
+                    <label for="radius">Radius</label>
+                    <br>
+                    <input type="number" id="radius" min="1" max="380" value="350">
+                    <br>
+
+                    <label for="elevation">Elevation</label>
+                    <br>
+                    <input type="number" id="elevation" min="0" max="100" value="10">
+                    <br>
+
+                    <label for="alpha-step">Alpha step</label>
+                    <br>
+                    <input type="number" id="alpha-step" min="0" max="1024" value="256">
+                    <br>
+
+                </fieldset>
+            </form>
+        </div>
+        <script>
+            function setup() {
+                noCanvas();
+                noiseSeed(0);
+            }
+
+            window.addEventListener('load', function () {
+                const canvas = document.querySelector('canvas'), ctx = canvas.getContext('2d');
+                let zoff = 0; zIncrement = 0.05;
+
+                const defaultConfig = {
+                    canvas: {
+                        width: 800,
+                        height: 800,
+                        get width2() {
+                            return this.width / 2;
+                        },
+                        get height2() {
+                            return this.height / 2;
+                        }
+                    },
+                    generation: {
+                        alphaStep: 256,
+                    },
+                    display: {
+                        radius: 350,
+                        elevation: 10,
+                        get halfElevation() {
+                            return this.elevation / 2;
+                        }
+                    },
+                };
+
+                const config = Object.assign(Object.create(null), defaultConfig);
+
+                const radiusElement = document.querySelector('#radius');
+                const elevationElement = document.querySelector('#elevation');
+                const alphaStepElement = document.querySelector('#alpha-step');
+                const resetElement = document.querySelector('#reset');
+
+                radiusElement.addEventListener('input', onRadiusChange);
+                elevationElement.addEventListener('input', onElevationChange);
+                alphaStepElement.addEventListener('input', onAlphaStepChange);
+                resetElement.addEventListener('click', onResetClick);
+
+                radiusElement.setAttribute('value', config.display.radius);
+                elevationElement.setAttribute('value', config.display.elevation);
+                alphaStepElement.setAttribute('value', config.generation.alphaStep);
+
+                render();
+
+                function render() {
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(0, 0, config.canvas.width, config.canvas.height);
+
+                    ctx.beginPath();
+                    for (let alpha = 0; alpha < 2 * Math.PI; alpha += Math.PI / config.generation.alphaStep) {
+                        const x = Math.cos(alpha) * config.display.radius + config.canvas.width2;
+                        const y = Math.sin(alpha) * config.display.radius + config.canvas.height2;
+                        const newRadius = config.display.radius + noise(x, y, zoff) * config.display.elevation - config.display.halfElevation;
+                        const _x = (newRadius * (x - config.canvas.width2)) / config.display.radius + config.canvas.width2;
+                        const _y = (newRadius * (y - config.canvas.height2)) / config.display.radius + config.canvas.height2;
+                        if (alpha === 0) {
+                            ctx.moveTo(_x, _y);
+                        } else {
+                            ctx.lineTo(_x, _y);
+                        }
+                    }
+                    ctx.closePath();
+
+                    ctx.strokeStyle = '#555';
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+
+                    function getX(x) { return (x * config.display.radius) + (config.canvas.width / 2); }
+                    function getY(y) { return (y * config.display.radius) + (config.canvas.height / 2); }
+                }
+
+                function onRadiusChange(event) {
+                    config.display.radius = Number(event.target.value);
+                    render();
+                }
+
+                function onElevationChange(event) {
+                    config.display.elevation = Number(event.target.value);
+                    render();
+                }
+
+                function onAlphaStepChange(event) {
+                    config.generation.alphaStep = Number(event.target.value);
+                    render();
+                }
+
+                function onResetClick(event) {
+
+                }
+
+                setInterval(function () {
+                    zoff += zIncrement;
+                    render();
+                }, 50);
+            });
+        </script>
+    </body>
+</html>
