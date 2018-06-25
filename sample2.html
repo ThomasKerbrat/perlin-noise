@@ -81,12 +81,10 @@
                 const radiusElement = document.querySelector('#radius');
                 const elevationElement = document.querySelector('#elevation');
                 const alphaStepElement = document.querySelector('#alpha-step');
-                const resetElement = document.querySelector('#reset');
 
                 radiusElement.addEventListener('input', onRadiusChange);
                 elevationElement.addEventListener('input', onElevationChange);
                 alphaStepElement.addEventListener('input', onAlphaStepChange);
-                resetElement.addEventListener('click', onResetClick);
 
                 radiusElement.setAttribute('value', config.display.radius);
                 elevationElement.setAttribute('value', config.display.elevation);
