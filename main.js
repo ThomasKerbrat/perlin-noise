@@ -59,7 +59,6 @@ window.addEventListener('load', function () {
 
         const imageData = ctx.createImageData(width, height);
         for (let index = 0; index < (width * height * 4); index += 4) {
-            // for (let index = 0; index < (width * height); index++) {
             for (let color of colors) {
                 const r = noiseValues[index / 4];
                 if (r < color.below) {
@@ -68,16 +67,6 @@ window.addEventListener('load', function () {
                     imageData.data[index + 1] = shadowFactor * color.green;
                     imageData.data[index + 2] = shadowFactor * color.blue;
                     imageData.data[index + 3] = 255;
-                    // ctx.fillStyle = [
-                    //     'rgb(',
-                    //     shadowFactor * color.red,
-                    //     ', ',
-                    //     shadowFactor * color.green,
-                    //     ', ',
-                    //     shadowFactor * color.blue,
-                    //     ')'
-                    // ].join('');
-                    // ctx.fillRect(Math.floor(index / width), index % width, 1, 1);
                     break;
                 }
             }
@@ -85,10 +74,6 @@ window.addEventListener('load', function () {
 
         ctx.putImageData(imageData, 0, 0);
     }
-
-    document.querySelector('#reload').addEventListener('click', function (event) {
-
-    });
 
     document.querySelector('#reload').addEventListener('click', function (event) {
         const seed = Number(document.querySelector('#noise-seed').value);

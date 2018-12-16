@@ -1,0 +1,9 @@
+
+canvas {
+    background-color: black;
+}
+
+.content {
+    display: flex;
+    flex-direction: row;
+}
